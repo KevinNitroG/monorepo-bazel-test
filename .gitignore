@@ -1,0 +1,4 @@
+bazel-bin
+bazel-monorepo-bazel-test
+bazel-out
+bazel-testlogs

@@ -1,0 +1,11 @@
+load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
+
+openapi_generator(
+    name = "pet",
+    generator = "go-gin-server",
+    spec = "openapi.yaml",
+    system_properties = {
+        "apis": "pet",
+    },
+    visibility = ["//visibility:public"],
+)
