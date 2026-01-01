@@ -1,8 +1,47 @@
-load("@rules_go//go:def.bzl", "go_binary")
+load("@bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
+load("@gazelle//:def.bzl", "gazelle")
+load("@openapi_tools_generator_bazel//:defs.bzl", "openapi_generator")
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+# gazelle:prefix github.com/KevinNitroG/monorepo-bazel-test/services/pet
+# gazelle:exclude openapi
+gazelle(name = "gazelle")
+
+openapi_generator(
+    name = "openapi",
+    generator = "go-gin-server",
+    spec = "//api:openapi.yaml",
+    system_properties = {
+        "apis": "pet",
+    },
+)
+
+copy_to_directory(
+    name = "openapi_dir",
+    srcs = [":openapi"],
+    exclude_srcs_patterns = ["**/main.go"],
+    include_srcs_patterns = ["**/*.go"],
+)
+
+go_library(
+    name = "openapi_go",
+    srcs = [":openapi_dir"],
+    importpath = "github.com/KevinNitroG/monorepo-bazel-test/openapi",
+    deps = ["@com_github_gin_gonic_gin//:go_default_library"],
+)
+
+go_library(
+    name = "pet_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/KevinNitroG/monorepo-bazel-test/services/pet",
+    visibility = ["//visibility:private"],
+    deps = [
+        ":openapi_go",  # keep
+    ],
+)
 
 go_binary(
     name = "pet",
-    srcs = ["main.go"],
+    embed = [":pet_lib"],
     visibility = ["//visibility:public"],
-    deps = ["//api:pet"],
 )
