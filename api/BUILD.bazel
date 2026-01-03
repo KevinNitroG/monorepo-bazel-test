@@ -1,4 +1,17 @@
-exports_files(
-    ["openapi.yaml"],
-    visibility = ["//visibility:public"],
+genrule(
+    name = "api",
+    srcs = glob([
+        "**/*.yaml",
+    ]),
+    outs = ["openapi.bundle.yaml"],
+    tools = ["@npm//@redocly/cli"],
+    cmd = """
+      $(location @npm//@redocly/cli) bundle \
+        ./openapi.yaml \
+        --output $@
+    """,
 )
+# exports_files(
+#     ["openapi.yaml"],
+#     visibility = ["//visibility:public"],
+# )

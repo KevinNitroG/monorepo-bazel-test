@@ -1,0 +1,6 @@
+packages:
+  - ./api/
+  - ./web/*
+  - ./packages/*
+onlyBuiltDependencies:
+  - "@redocly/cli"
