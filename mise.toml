@@ -1,2 +1,3 @@
 [tools]
 bazel = "8.5.0"
+"npm:@redocly/cli" = "2.14.3"
