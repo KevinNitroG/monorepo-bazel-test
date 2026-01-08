@@ -1,17 +1,21 @@
-genrule(
-    name = "api",
-    srcs = glob([
-        "**/*.yaml",
-    ]),
-    outs = ["openapi.bundle.yaml"],
-    tools = ["@npm//@redocly/cli"],
-    cmd = """
-      $(location @npm//@redocly/cli) bundle \
-        ./openapi.yaml \
-        --output $@
-    """,
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_js//js:defs.bzl", "js_run_binary")
+
+npm_link_all_packages(
+    name = "node_modules"
 )
-# exports_files(
-#     ["openapi.yaml"],
-#     visibility = ["//visibility:public"],
-# )
+
+js_run_binary(
+    name = "bundle",
+    srcs = glob(["**/*.yaml"]),
+    outs = ["openapi.combined.yaml"],
+    args = [
+        "bundle",
+        "--output",
+        "$(rootpath openapi.combined.yaml)", 
+        "$(rootpath openapi.yaml)",
+    ],
+    chdir = package_name(),
+    tool = ":node_modules/@redocly/cli",
+    patch_node_fs = False,
+)

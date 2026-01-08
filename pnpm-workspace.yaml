@@ -2,5 +2,7 @@ packages:
   - ./api/
   - ./web/*
   - ./packages/*
+
 onlyBuiltDependencies:
-  - "@redocly/cli"
+  - core-js
+  - protobufjs
